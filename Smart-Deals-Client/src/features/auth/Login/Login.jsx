@@ -20,7 +20,8 @@ function Login() {
             </label>
             <input
               type="email"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:leading-6"
+              name="email"
+              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
               placeholder="Email"
             />
             <label className="label mt-4 font-medium text-sm text-primary leading-5">
@@ -28,7 +29,8 @@ function Login() {
             </label>
             <input
               type="password"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:leading-6"
+              name="password"
+              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
               placeholder="Password"
             />
             <section className="mt-1.5">
@@ -41,7 +43,9 @@ function Login() {
             </button>
           </fieldset>
           <section>
-            <p className="font-semibold text-base text-primary text-center">OR</p>
+            <p className="font-semibold text-base text-primary text-center">
+              OR
+            </p>
           </section>
           <button className="btn py-4 bg-white font-semibold text-base text-primary border-accent">
             <svg
