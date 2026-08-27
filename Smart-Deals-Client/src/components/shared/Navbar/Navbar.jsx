@@ -22,10 +22,10 @@ function Navbar() {
   );
 
   return (
-    <div className="navbar bg-white shadow-sm px-20 py-4">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+    <section className="navbar bg-white shadow-sm px-20 py-4">
+      <section className="navbar-start">
+        <section className="dropdown">
+          <section tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -41,24 +41,24 @@ function Navbar() {
                 d="M4 6h16M4 12h8m-8 6h16"
               />{" "}
             </svg>
-          </div>
+          </section>
           <ul
             tabIndex={-1}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow leading-[1.52] text-black"
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base leading-[1.52] text-black"
           >
             {links}
           </ul>
-        </div>
-        <a className="text-3xl font-bold text-primary leading-10">
+        </section>
+        <Link className="text-3xl font-bold text-primary leading-10 cursor-pointer" to={"/"}>
           Smart<span className="text-secondary">Deals</span>
-        </a>
-      </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu-horizontal gap-8 leading-[1.52] text-black">
+        </Link>
+      </section>
+      <section className="navbar-center hidden lg:flex">
+        <ul className="menu-horizontal gap-8 text-base leading-[1.52] text-black">
           {links}
         </ul>
-      </div>
-      <div className="navbar-end">
+      </section>
+      <section className="navbar-end">
         <Link
           to={"/auth/login"}
           className="border border-secondary rounded-sm px-7 py-3 mr-4 text-secondary font-semibold"
@@ -71,8 +71,8 @@ function Navbar() {
         >
           Register
         </Link>
-      </div>
-    </div>
+      </section>
+    </section>
   );
 }
 

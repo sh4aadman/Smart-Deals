@@ -9,12 +9,19 @@
   default: true;
   --color-primary: #001931;
   --color-secondary: #632EE3;
+  --color-accent: #E9E9E9;
 }
 
 .font-inter {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+html, body {
+  border: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 a.active {
