@@ -10,6 +10,9 @@
   --color-primary: #001931;
   --color-secondary: #632EE3;
   --color-accent: #E9E9E9;
+  --color-info: #A1A1AA;
+  --color-warning: #FAFAFA;
+  --color-neutral: #627382;
 }
 
 .font-inter {

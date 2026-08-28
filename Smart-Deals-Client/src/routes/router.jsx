@@ -4,10 +4,10 @@ import AuthLayout from "../layouts/AuthLayout/AuthLayout";
 import Login from "../features/auth/Login/Login";
 import Register from "../features/auth/Register/Register";
 import Home from "../pages/Home/Home";
-import AllProducts from "../pages/AllProducts/AllProducts";
-import MyProducts from "../pages/MyProducts/MyProducts";
-import MyBids from "../pages/MyBids/MyBids";
-import CreateProduct from "../pages/CreateProduct/CreateProduct";
+import AllProducts from "../pages/All Products/AllProducts";
+import MyProducts from "../pages/My Products/MyProducts";
+import MyBids from "../pages/My Bids/MyBids";
+import CreateProduct from "../pages/Create Product/CreateProduct";
 
 const router = createBrowserRouter([
   {
