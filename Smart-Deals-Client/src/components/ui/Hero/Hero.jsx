@@ -42,7 +42,7 @@ function Hero() {
         </Link>
         <Link
           to={"/create-product"}
-          className="border border-secondary rounded-sm px-7 py-3 mr-4 text-secondary font-semibold"
+          className="border border-secondary rounded-sm px-7 py-3 text-secondary font-semibold"
         >
           Post A Product
         </Link>
