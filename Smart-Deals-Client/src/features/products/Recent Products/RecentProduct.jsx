@@ -10,7 +10,7 @@ function RecentProduct() {
         Recent <span className="text-secondary">Products</span>
       </h2>
       <Suspense fallback={<Loading />}>
-        <ProductGrid recentProductsPromise={recentProductsPromise} />
+        <ProductGrid productsPromise={recentProductsPromise} />
       </Suspense>
     </section>
   );

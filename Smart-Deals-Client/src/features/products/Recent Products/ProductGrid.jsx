@@ -1,12 +1,12 @@
 import { use } from "react";
 import ProductCard from "./ProductCard";
 
-function ProductGrid({ recentProductsPromise }) {
-  const recentProducts = use(recentProductsPromise);
+function ProductGrid({ productsPromise }) {
+  const products = use(productsPromise);
   return (
     <section>
       <section className="px-20 mb-10 grid grid-cols-3 gap-6">
-        {recentProducts.map((product) => (
+        {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </section>
