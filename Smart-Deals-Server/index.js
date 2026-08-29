@@ -1,17 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// smartDealsDB
-// k4R3DfcgfDRWwZOk
-
-const uri =
-  "mongodb+srv://smartDealsDB:k4R3DfcgfDRWwZOk@cluster0.j227rhq.mongodb.net/?appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -79,6 +76,12 @@ app.patch("/products/:id/status/:text", async (req, res) => {
     },
   };
   const result = await productsCollection.updateOne(query, update);
+  res.send(result);
+});
+
+app.get("/recent-products", async (req, res) => {
+  const cursor = productsCollection.find().sort({ created_at: -1 }).limit(6);
+  const result = await cursor.toArray();
   res.send(result);
 });
 
