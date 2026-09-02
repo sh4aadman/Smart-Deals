@@ -1,5 +1,5 @@
 import { use } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "../components/ProductCard";
 
 function ProductGrid({ productsPromise }) {
   const products = use(productsPromise);

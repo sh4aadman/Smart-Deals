@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Loading from "../../components/ui/Loading/Loading";
-import ProductGrid from "../../features/products/Recent Products/ProductGrid";
+import ProductGrid from "../../features/products/components/ProductGrid";
 import { allProductsPromise } from "../../utils/getAllProducts";
 
 function AllProducts() {

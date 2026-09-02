@@ -4,7 +4,7 @@ import Footer from "../../components/shared/Footer/Footer";
 
 function MainLayout() {
   return (
-    <section className="font-inter">
+    <section className="font-inter bg-accent">
       <Navbar />
       <Outlet />
       <Footer />

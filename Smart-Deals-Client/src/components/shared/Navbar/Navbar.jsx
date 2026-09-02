@@ -7,7 +7,7 @@ function Navbar() {
         <NavLink to={"/"}>Home</NavLink>
       </li>
       <li>
-        <NavLink to={"/all-products"}>All Products</NavLink>
+        <NavLink to={"/products"}>All Products</NavLink>
       </li>
       <li>
         <NavLink to={"/my-products"}>My Products</NavLink>

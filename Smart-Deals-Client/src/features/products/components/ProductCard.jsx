@@ -4,7 +4,7 @@ function ProductCard({ product }) {
   const { _id, title, price_min, price_max, image } = product;
 
   return (
-    <section className="p-4 rounded-lg shadow-2xl">
+    <section className="p-4 rounded-lg shadow-xl">
       <figure className="mb-4">
         <img
           className="w-full rounded-lg aspect-video object-cover object-center"
