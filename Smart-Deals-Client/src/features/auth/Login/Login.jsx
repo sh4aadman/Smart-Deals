@@ -1,6 +1,27 @@
+import { use, useState } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 
 function Login() {
+  const [error, setError] = useState("");
+
+  const { setUser, signinUser } = use(AuthContext);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    signinUser(email, password)
+      .then((creds) => {
+        const user = creds.user;
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorMsg = error.message;
+        setError(`${errorMsg}`);
+      });
+  };
+
   return (
     <section className="bg-accent h-[calc(100vh-85px)] flex justify-center items-center">
       <section className="card bg-white w-1/4 shrink-0 shadow-xl">
@@ -14,34 +35,41 @@ function Login() {
               Register Now
             </Link>
           </p>
-          <fieldset className="fieldset">
-            <label className="label font-medium text-sm text-primary leading-5">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Email"
-            />
-            <label className="label mt-4 font-medium text-sm text-primary leading-5">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Password"
-            />
-            <section className="mt-1.5">
-              <a className="link link-hover text-sm text-primary opacity-60 leading-5">
-                Forgot password?
-              </a>
-            </section>
-            <button className="mt-6 py-3.5 bg-secondary rounded-sm font-semibold text-base text-white cursor-pointer">
-              Sign In
-            </button>
-          </fieldset>
+          <form onSubmit={handleLogin}>
+            <fieldset className="fieldset">
+              <label className="label font-medium text-sm text-primary leading-5">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Email"
+              />
+              {error && <p className="text-xs text-red-500">{error}</p>}
+              <label className="label mt-4 font-medium text-sm text-primary leading-5">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Password"
+              />
+              {error && <p className="text-xs text-red-500">{error}</p>}
+              <section className="mt-1.5">
+                <a className="link link-hover text-sm text-primary opacity-60 leading-5">
+                  Forgot password?
+                </a>
+              </section>
+              <button
+                type="submit"
+                className="mt-6 py-3.5 bg-secondary rounded-sm font-semibold text-base text-white cursor-pointer"
+              >
+                Sign In
+              </button>
+            </fieldset>
+          </form>
           <section>
             <p className="font-semibold text-base text-primary text-center">
               OR

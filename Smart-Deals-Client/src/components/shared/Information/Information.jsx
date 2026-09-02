@@ -1,9 +1,11 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router";
 import { formatDate } from "../../../utils/formatDate";
-import { useRef } from "react";
+import { use, useRef } from "react";
+import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 
 function Information({ informationDetails }) {
+  const { user } = use(AuthContext);
   const bidModalRef = useRef(null);
 
   const {
@@ -31,6 +33,21 @@ function Information({ informationDetails }) {
 
   const handleBidSubmit = (e) => {
     e.preventDefault();
+    const name = e.target.value.name;
+    const email = e.target.value.email;
+    const photoURL = e.target.value.photoURL;
+    const bid = e.target.value.bid;
+    const contactInfo = e.target.value.contactInfo;
+    const newBid = {
+      product: _id,
+      buyer_image: photoURL,
+      buyer_name: name,
+      buyer_contact: contactInfo,
+      buyer_email: email,
+      bid_price: bid,
+      status: "pending",
+    };
+    console.log(newBid);
   };
 
   return (
@@ -118,9 +135,12 @@ function Information({ informationDetails }) {
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    value={user?.displayName}
                     className="input outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                     placeholder="Your Name"
                     required
+                    readOnly
                   />
                 </section>
                 <section>
@@ -129,9 +149,12 @@ function Information({ informationDetails }) {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={user?.email}
                     className="input outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                     placeholder="Your Email"
                     required
+                    readOnly
                   />
                 </section>
               </section>
@@ -141,6 +164,8 @@ function Information({ informationDetails }) {
                 </label>
                 <input
                   type="url"
+                  name="photoURL"
+                  value={user?.photoURL}
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="https://your_image_url"
                 />
@@ -151,6 +176,7 @@ function Information({ informationDetails }) {
                 </label>
                 <input
                   type="number"
+                  name="bid"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="Your Price"
                   required
@@ -162,6 +188,7 @@ function Information({ informationDetails }) {
                 </label>
                 <input
                   type="tel"
+                  name="contactInfo"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="Your Contact Info"
                   required
@@ -172,7 +199,7 @@ function Information({ informationDetails }) {
           <div className="modal-action">
             <form method="dialog">
               <button
-                onClick={() => handleModalClose()}
+                onClick={handleModalClose}
                 className="px-4 py-3.5 mr-4 border border-secondary bg-white rounded-sm font-semibold text-base text-secondary cursor-pointer"
               >
                 Cancel

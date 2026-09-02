@@ -11,6 +11,7 @@ import CreateProduct from "../pages/Create Product/CreateProduct";
 import ProductDetails from "../features/products/components/ProductDetails";
 import ProductLayout from "../layouts/ProductLayout/ProductLayout";
 import Loading from "../components/ui/Loading/Loading";
+import PrivateRoute from "./Private Route/PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -30,25 +31,35 @@ const router = createBrowserRouter([
             Component: AllProducts,
           },
           {
-            path: ":id",
-            loader: ({ params }) =>
-              fetch(`http://localhost:3000/products/${params.id}`),
-            Component: ProductDetails,
-            hydrateFallbackElement: <Loading />,
+            Component: PrivateRoute,
+            children: [
+              {
+                path: ":id",
+                loader: ({ params }) =>
+                  fetch(`http://localhost:3000/products/${params.id}`),
+                Component: ProductDetails,
+                hydrateFallbackElement: <Loading />,
+              },
+            ],
           },
         ],
       },
       {
-        path: "my-products",
-        Component: MyProducts,
-      },
-      {
-        path: "my-bids",
-        Component: MyBids,
-      },
-      {
-        path: "create-product",
-        Component: CreateProduct,
+        Component: PrivateRoute,
+        children: [
+          {
+            path: "my-products",
+            Component: MyProducts,
+          },
+          {
+            path: "my-bids",
+            Component: MyBids,
+          },
+          {
+            path: "create-product",
+            Component: CreateProduct,
+          },
+        ],
       },
     ],
   },
