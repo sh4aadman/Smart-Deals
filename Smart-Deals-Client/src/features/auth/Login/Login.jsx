@@ -1,11 +1,14 @@
 import { use, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 
 function Login() {
   const [error, setError] = useState("");
 
   const { setUser, signinUser } = use(AuthContext);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -15,10 +18,11 @@ function Login() {
       .then((creds) => {
         const user = creds.user;
         setUser(user);
+        navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
         const errorMsg = error.message;
-        setError(`${errorMsg}`);
+        setError(errorMsg);
       });
   };
 
@@ -46,7 +50,6 @@ function Login() {
                 className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
                 placeholder="Email"
               />
-              {error && <p className="text-xs text-red-500">{error}</p>}
               <label className="label mt-4 font-medium text-sm text-primary leading-5">
                 Password
               </label>
@@ -56,7 +59,6 @@ function Login() {
                 className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
                 placeholder="Password"
               />
-              {error && <p className="text-xs text-red-500">{error}</p>}
               <section className="mt-1.5">
                 <a className="link link-hover text-sm text-primary opacity-60 leading-5">
                   Forgot password?
@@ -68,6 +70,7 @@ function Login() {
               >
                 Sign In
               </button>
+              {error && <p className="text-xs text-red-500">{error}</p>}
             </fieldset>
           </form>
           <section>

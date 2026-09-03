@@ -1,6 +1,45 @@
-import { Link } from "react-router";
+import { use, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 
 function Register() {
+  const [error, setError] = useState("");
+
+  const { setUser, createUser, updateUser } = use(AuthContext);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const photoURL = e.target.photoUrl.value;
+    const password = e.target.password.value;
+    createUser(email, password)
+      .then((creds) => {
+        const signedinUser = creds.user;
+        const updatedInfo = {
+          displayName: name,
+          photoURL: photoURL,
+        };
+        updateUser(updatedInfo)
+          .then(() => {
+            setUser({ ...signedinUser, displayName: name, photoURL: photoURL });
+            navigate(`${location.state ? location.state : "/"}`);
+          })
+          .catch((error) => {
+            const errorMsg = error?.message;
+            setError(errorMsg);
+            setUser(signedinUser);
+          });
+      })
+      .catch((error) => {
+        const errorMsg = error.message;
+        setError(errorMsg);
+      });
+  };
+
   return (
     <section className="bg-accent h-[calc(100vh-85px)] flex justify-center items-center">
       <section className="card bg-white w-1/4 shrink-0 shadow-xl">
@@ -14,47 +53,56 @@ function Register() {
               Login Now
             </Link>
           </p>
-          <fieldset className="fieldset">
-            <label className="label font-medium text-sm text-primary leading-5">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Name"
-            />
-            <label className="label mt-4 font-medium text-sm text-primary leading-5">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Email"
-            />
-            <label className="label mt-4 font-medium text-sm text-primary leading-5">
-              Image-URL
-            </label>
-            <input
-              type="url"
-              name="image-url"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Image-URL"
-            />
-            <label className="label mt-4 font-medium text-sm text-primary leading-5">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
-              placeholder="Password"
-            />
-            <button className="mt-6 py-3.5 bg-secondary rounded-sm font-semibold text-base text-white cursor-pointer">
-              Register
-            </button>
-          </fieldset>
+          <form onSubmit={handleRegister}>
+            <fieldset className="fieldset">
+              <label className="label font-medium text-sm text-primary leading-5">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Name"
+                required
+              />
+              <label className="label mt-4 font-medium text-sm text-primary leading-5">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Email"
+                required
+              />
+              <label className="label mt-4 font-medium text-sm text-primary leading-5">
+                Image-URL
+              </label>
+              <input
+                type="url"
+                name="photoUrl"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Image-URL"
+              />
+              <label className="label mt-4 font-medium text-sm text-primary leading-5">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                className="input outline-0 py-2 w-full border-accent text-base focus:border-secondary placeholder:text-base placeholder:text-primary placeholder:opacity-50 placeholder:leading-6"
+                placeholder="Password"
+                required
+              />
+              <button
+                type="submit"
+                className="mt-6 py-3.5 bg-secondary rounded-sm font-semibold text-base text-white cursor-pointer"
+              >
+                Register
+              </button>
+              {error && <p className="text-xs text-red-500">{error}</p>}
+            </fieldset>
+          </form>
           <section>
             <p className="font-semibold text-base text-primary text-center">
               OR

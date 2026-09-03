@@ -35,7 +35,7 @@ function Hero() {
       <SearchField />
       <section className="mt-8 flex justify-center gap-4">
         <Link
-          to={"/all-products"}
+          to={"/products"}
           className="border border-secondary bg-secondary rounded-sm px-7 py-3 mr-4 text-white font-semibold"
         >
           Watch All Products
