@@ -1,6 +1,6 @@
 import Table from "../../../components/ui/Table/Table";
 
-function Bids({ bids }) {
+function Bids({ bids, details }) {
   const bidsLength = new Intl.NumberFormat("en-US", {
     minimumIntegerDigits: 2,
   }).format(bids.length);
@@ -11,7 +11,7 @@ function Bids({ bids }) {
         Bids for this product:{" "}
         <span className="text-secondary">{bidsLength}</span>
       </h2>
-      <Table bids={bids} />
+      <Table bids={bids} details={details} />
     </section>
   );
 }

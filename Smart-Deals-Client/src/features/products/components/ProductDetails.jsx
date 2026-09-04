@@ -71,7 +71,7 @@ function ProductDetails() {
           handleNewBid={handleNewBid}
         />
       </section>
-      <Bids bids={bids} />
+      <Bids bids={bids} details={details} />
     </>
   );
 }

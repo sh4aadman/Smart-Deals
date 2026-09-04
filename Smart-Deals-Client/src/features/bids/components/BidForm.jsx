@@ -42,7 +42,7 @@ function BidForm({ id, ref, handleNewBid }) {
         if (data.insertedId) {
           ref.current.close();
           toast("Your Bid has been palced!", {
-            duration: 10000,
+            duration: 8000,
           });
           newBid._id = data.insertedId;
           handleNewBid(newBid);
