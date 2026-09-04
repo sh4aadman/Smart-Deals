@@ -14,7 +14,11 @@
   --color-warning: #FAFAFA;
   --color-neutral: #627382;
   --color-base-100: #F5F5F5;
+  --color-success: #4CAF50;
+  --color-error: #FF3D00;
 }
+
+/* 4CAF50 */
 
 .font-inter {
   font-family: "Inter", sans-serif;
