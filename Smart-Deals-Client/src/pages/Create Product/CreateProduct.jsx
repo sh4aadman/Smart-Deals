@@ -1,7 +1,11 @@
 import { FaArrowLeft } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 
 function CreateProduct() {
+  const products = useLoaderData();
+
+  const categories = [...new Set(products.map((product) => product.category))];
+
   return (
     <section className="mt-20 mb-10">
       <section className="mb-10 flex flex-col justify-center items-center gap-5">
@@ -40,9 +44,9 @@ function CreateProduct() {
                   <option className="text-base" disabled={true}>
                     Select A Category
                   </option>
-                  <option>Crimson</option>
-                  <option>Amber</option>
-                  <option>Velvet</option>
+                  {categories.map((category) => (
+                    <option key={category}>{category}</option>
+                  ))}
                 </select>
               </section>
             </section>
@@ -83,7 +87,7 @@ function CreateProduct() {
                       className="radio radio-sm radio-secondary"
                     />
                     <label
-                      for="brandNew"
+                      htmlFor="brandNew"
                       className="font-medium text-sm text-primary leading-5"
                     >
                       Brand New
@@ -98,7 +102,7 @@ function CreateProduct() {
                       className="radio radio-sm radio-secondary"
                     />
                     <label
-                      for="Used"
+                      htmlFor="Used"
                       className="font-medium text-sm text-primary leading-5"
                     >
                       Used
