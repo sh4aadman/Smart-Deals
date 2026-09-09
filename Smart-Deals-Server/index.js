@@ -86,19 +86,47 @@ app.get("/recent-products", async (req, res) => {
 });
 
 app.get("/bids", async (req, res) => {
-  const email = req.query;
+  const email = req.query.email;
   const query = {};
   if (email) {
     query.buyer_email = email;
   }
-  const cursor = bidsCollection.find(query);
-  const result = cursor.toArray();
+  const bids = await bidsCollection.find(query).toArray();
+  const productIds = bids.map((bid) => new ObjectId(bid.product));
+  const products = await productsCollection
+    .find(
+      {
+        _id: { $in: productIds },
+      },
+      {
+        projection: {
+          title: 1,
+          image: 1,
+          price_min: 1,
+        },
+      },
+    )
+    .toArray();
+  const result = bids.map((bid) => {
+    const product = products.find(
+      (product) => product._id.toString() === bid.product,
+    );
+    return { ...bid, productInfo: product };
+  });
   res.send(result);
 });
 
 app.post("/bids", async (req, res) => {
   const newBid = req.body;
   const result = await bidsCollection.insertOne(newBid);
+  res.send(result);
+});
+
+app.get("/bids/:productId", async (req, res) => {
+  const productId = req.params.productId;
+  const query = { product: productId };
+  const cursor = bidsCollection.find(query).sort({ bid_price: -1 });
+  const result = await cursor.toArray();
   res.send(result);
 });
 
