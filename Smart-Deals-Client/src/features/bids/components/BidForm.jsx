@@ -1,6 +1,6 @@
 import { use, useState } from "react";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 function BidForm({ id, ref, handleNewBid }) {
   const { user } = use(AuthContext);
@@ -41,8 +41,8 @@ function BidForm({ id, ref, handleNewBid }) {
       .then((data) => {
         if (data.insertedId) {
           ref.current.close();
-          toast("Your Bid has been palced!", {
-            duration: 8000,
+          toast("Your Bid has been placed!", {
+            duration: 5000,
           });
           newBid._id = data.insertedId;
           handleNewBid(newBid);
@@ -144,7 +144,6 @@ function BidForm({ id, ref, handleNewBid }) {
           </div>
         </div>
       </dialog>
-      <Toaster />
     </>
   );
 }

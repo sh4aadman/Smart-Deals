@@ -2,7 +2,7 @@ import { use, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { AuthContext } from "../../context/Auth Context/AuthProvider";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 function CreateProduct() {
   const products = useLoaderData();
@@ -107,7 +107,7 @@ function CreateProduct() {
                   defaultValue="Pick a Category"
                   className="select w-full outline-0 text-primary"
                 >
-                  <option className="text-base" disabled={true}>
+                  <option className="text-base" value={""}>
                     Select A Category
                   </option>
                   {categories.map((category) => (
@@ -282,7 +282,6 @@ function CreateProduct() {
           </fieldset>
         </form>
       </section>
-      <Toaster />
     </section>
   );
 }

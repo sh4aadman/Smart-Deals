@@ -1,4 +1,4 @@
-function Table({ bids, status = false, details = null }) {
+function Table({ bids, status = false, details = null, handleRemoveBid }) {
   return (
     <section className="overflow-x-auto rounded-lg">
       <table className="table">
@@ -89,7 +89,10 @@ function Table({ bids, status = false, details = null }) {
                 )}
                 {status ? (
                   <td>
-                    <button className="px-3.5 py-1.5 rounded-sm border border-error font-medium text-sm text-error cursor-pointer">
+                    <button
+                      onClick={() => handleRemoveBid(bid?._id)}
+                      className="px-3.5 py-1.5 rounded-sm border border-error font-medium text-sm text-error cursor-pointer"
+                    >
                       Remove Bid
                     </button>
                   </td>
