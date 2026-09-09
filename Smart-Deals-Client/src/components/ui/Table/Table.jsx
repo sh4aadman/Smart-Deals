@@ -82,7 +82,7 @@ function Table({ bids, status = false, details = null }) {
                 </td>
                 {status && (
                   <td>
-                    <p className="inline px-2.5 py-1.5 rounded-full bg-[#FFC107] text-xs text-primary">
+                    <p className="inline px-2.5 py-1.5 rounded-full bg-[#FFC107] text-xs text-primary capitalize">
                       {bid?.status}
                     </p>
                   </td>

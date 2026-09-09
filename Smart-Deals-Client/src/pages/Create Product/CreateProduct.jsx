@@ -1,10 +1,70 @@
+import { use, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useNavigate } from "react-router";
+import { AuthContext } from "../../context/Auth Context/AuthProvider";
+import { toast, Toaster } from "sonner";
 
 function CreateProduct() {
   const products = useLoaderData();
 
+  const { user } = use(AuthContext);
+
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+
   const categories = [...new Set(products.map((product) => product.category))];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const title = form.title.value;
+    const price_min = Number(form.priceMin.value);
+    const price_max = Number(form.priceMax.value);
+    const email = user.email;
+    const category = form.category.value;
+    const created_at = new Date().toISOString();
+    const image = form.productImg.value;
+    const status = "pending";
+    const location = form.location.value;
+    const seller_image = user.photoURL;
+    const seller_name = user.displayName;
+    const condition = form.condition.value;
+    const usage = form.usage.value;
+    const description = form.description.value;
+    const seller_contact = form.contact.value;
+    const newProduct = {
+      title,
+      price_min,
+      price_max,
+      email,
+      category,
+      created_at,
+      image,
+      status,
+      location,
+      seller_image,
+      seller_name,
+      condition,
+      usage,
+      description,
+      seller_contact,
+    };
+    fetch("http://localhost:3000/products", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(newProduct),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.insertedId) {
+          toast("Your product has been created!");
+          formRef.current.reset();
+          navigate("/my-products");
+        }
+      });
+  };
 
   return (
     <section className="mt-20 mb-10">
@@ -20,7 +80,11 @@ function CreateProduct() {
         </h2>
       </section>
       <section className="flex justify-center">
-        <form className="w-1/2 bg-white rounded-sm shadow-lg">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="w-1/2 bg-white rounded-sm shadow-lg"
+        >
           <fieldset className="fieldset p-10">
             <section className="mb-6 flex items-center gap-4">
               <section className="flex-1 flex flex-col">
@@ -29,6 +93,7 @@ function CreateProduct() {
                 </label>
                 <input
                   type="text"
+                  name="title"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="e.g. Yamaha Fz Guitar for Sale"
                 />
@@ -38,14 +103,17 @@ function CreateProduct() {
                   Category
                 </label>
                 <select
-                  defaultValue="Pick a color"
+                  name="category"
+                  defaultValue="Pick a Category"
                   className="select w-full outline-0 text-primary"
                 >
                   <option className="text-base" disabled={true}>
                     Select A Category
                   </option>
                   {categories.map((category) => (
-                    <option key={category}>{category}</option>
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
                   ))}
                 </select>
               </section>
@@ -57,6 +125,7 @@ function CreateProduct() {
                 </label>
                 <input
                   type="number"
+                  name="priceMin"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="e.g. 18.5"
                 />
@@ -67,6 +136,7 @@ function CreateProduct() {
                 </label>
                 <input
                   type="number"
+                  name="priceMax"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="Optional (default = Min Price)"
                 />
@@ -116,6 +186,7 @@ function CreateProduct() {
                 </label>
                 <input
                   type="text"
+                  name="usage"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="e.g. 1 year 3 month"
                 />
@@ -127,6 +198,7 @@ function CreateProduct() {
               </label>
               <input
                 type="url"
+                name="productImg"
                 className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                 placeholder="https://..."
               />
@@ -138,8 +210,10 @@ function CreateProduct() {
                 </label>
                 <input
                   type="text"
+                  value={user.displayName}
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="e.g. Artisan Roasters"
+                  readOnly
                 />
               </section>
               <section className="flex-1 flex flex-col">
@@ -148,8 +222,10 @@ function CreateProduct() {
                 </label>
                 <input
                   type="email"
+                  value={user.email}
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="leli31955@nrlord.com"
+                  readOnly
                 />
               </section>
             </section>
@@ -160,6 +236,7 @@ function CreateProduct() {
                 </label>
                 <input
                   type="tel"
+                  name="contact"
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="e.g. +1-555-1234"
                 />
@@ -170,8 +247,10 @@ function CreateProduct() {
                 </label>
                 <input
                   type="url"
+                  value={user.photoURL}
                   className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                   placeholder="https://..."
+                  readOnly
                 />
               </section>
             </section>
@@ -181,6 +260,7 @@ function CreateProduct() {
               </label>
               <input
                 type="text"
+                name="location"
                 className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                 placeholder="City, Country"
               />
@@ -191,6 +271,7 @@ function CreateProduct() {
               </label>
               <input
                 type="text"
+                name="description"
                 className="input w-full outline-0 text-base text-primary placeholder:opacity-50 placeholder:leading-6"
                 placeholder="e.g. I bought this product 3 month ago. did not used more than 1/2 time. actually learning guitar is so tough..... "
               />
@@ -201,6 +282,7 @@ function CreateProduct() {
           </fieldset>
         </form>
       </section>
+      <Toaster />
     </section>
   );
 }
