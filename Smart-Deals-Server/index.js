@@ -21,6 +21,26 @@ const client = new MongoClient(uri, {
 const db = client.db("smart_deals_db");
 const productsCollection = db.collection("products");
 const bidsCollection = db.collection("bids");
+const usersCollection = db.collection("users");
+
+app.get("/users", async (req, res) => {
+  const cursor = usersCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+});
+
+app.post("/users", async (req, res) => {
+  const newUser = req.body;
+  const email = newUser.email;
+  const query = { email: email };
+  const existingUser = await usersCollection.findOne(query);
+  if (existingUser) {
+    res.send({ message: "User already exists!" });
+  } else {
+    const result = await usersCollection.insertOne(newUser);
+    res.send(result);
+  }
+});
 
 app.get("/products", async (req, res) => {
   const email = req.query.email;
