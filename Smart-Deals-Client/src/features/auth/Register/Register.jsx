@@ -2,6 +2,7 @@ import { use, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
+import axios from "axios";
 
 function Register() {
   const [error, setError] = useState("");
@@ -33,21 +34,13 @@ function Register() {
               displayName: name,
               photoURL,
             };
-            fetch("http://localhost:3000/users", {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify(newUser),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.insertedId) {
-                  setUser({ ...signedinUser, displayName: name, photoURL });
-                  toast("User has successfully registered!");
-                  navigate(`${location.state ? location.state : "/"}`);
-                }
-              });
+            axios.post("http://localhost:3000/users", newUser).then((data) => {
+              if (data.data.insertedId) {
+                setUser({ ...signedinUser, displayName: name, photoURL });
+                toast("User has successfully registered!");
+                navigate(`${location.state ? location.state : "/"}`);
+              }
+            });
           })
           .catch((error) => {
             const errorMsg = error?.message;

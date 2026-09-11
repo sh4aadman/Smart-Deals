@@ -1,6 +1,8 @@
+import axios from "axios";
+
 const fetchAllProducts = async () => {
-  const response = await fetch("http://localhost:3000/products");
-  return response.json();
+  const response = await axios.get("http://localhost:3000/products");
+  return response.data;
 };
 
 const allProductsPromise = fetchAllProducts();

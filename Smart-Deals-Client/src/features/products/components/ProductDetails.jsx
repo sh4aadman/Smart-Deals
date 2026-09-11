@@ -3,6 +3,7 @@ import Description from "../../../components/shared/Description/Description";
 import Information from "../../../components/shared/Information/Information";
 import Bids from "../../bids/components/Bids";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function ProductDetails() {
   const [bids, setBids] = useState([]);
@@ -55,11 +56,9 @@ function ProductDetails() {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/bids/${_id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setBids(data);
-      });
+    axios.get(`http://localhost:3000/bids/${_id}`).then((res) => {
+      setBids(res.data);
+    });
   }, [_id]);
 
   return (

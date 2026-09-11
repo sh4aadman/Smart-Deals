@@ -3,6 +3,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { AuthContext } from "../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
+import axios from "axios";
 
 function CreateProduct() {
   const products = useLoaderData();
@@ -49,21 +50,13 @@ function CreateProduct() {
       description,
       seller_contact,
     };
-    fetch("http://localhost:3000/products", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(newProduct),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.insertedId) {
-          toast("Your product has been created!");
-          formRef.current.reset();
-          navigate("/my-products");
-        }
-      });
+    axios.post("http://localhost:3000/products", newProduct).then((data) => {
+      if (data.data.insertedId) {
+        toast("Your product has been created!");
+        formRef.current.reset();
+        navigate("/my-products");
+      }
+    });
   };
 
   return (

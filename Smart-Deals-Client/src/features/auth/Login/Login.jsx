@@ -2,6 +2,7 @@ import { use, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
+import axios from "axios";
 
 function Login() {
   const [error, setError] = useState("");
@@ -34,20 +35,12 @@ function Login() {
           photoURL: creds.user.photoURL,
           displayName: creds.user.displayName,
         };
-        fetch("http://localhost:3000/users", {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.insertedId) {
-              toast("User has successfully logged in!");
-              navigate(`${location.state ? location.state : "/"}`);
-            }
-          });
+        axios.post("http://localhost:3000/users", newUser).then((data) => {
+          if (data.data.insertedId) {
+            toast("User has successfully logged in!");
+            navigate(`${location.state ? location.state : "/"}`);
+          }
+        });
       })
       .catch((error) => {
         const errorMessage = error.message;

@@ -1,5 +1,6 @@
 import { use, useEffect, useState } from "react";
 import { AuthContext } from "../../context/Auth Context/AuthProvider";
+import axios from "axios";
 
 function MyProducts() {
   const { user } = use(AuthContext);
@@ -8,9 +9,9 @@ function MyProducts() {
   useEffect(() => {
     if (!user?.email) return;
 
-    fetch(`http://localhost:3000/products?email=${user.email}`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+    axios
+      .get(`http://localhost:3000/products?email=${user.email}`)
+      .then((response) => setProducts(response.data));
   }, [user]);
 
   return (

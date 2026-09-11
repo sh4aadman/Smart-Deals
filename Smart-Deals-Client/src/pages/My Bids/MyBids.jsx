@@ -2,6 +2,7 @@ import Table from "../../components/ui/Table/Table";
 import { use, useEffect, useState } from "react";
 import { AuthContext } from "../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
+import axios from "axios";
 
 function MyBids() {
   const { user } = use(AuthContext);
@@ -9,21 +10,17 @@ function MyBids() {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:3000/bids?email=${user.email}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setBids(data);
-        });
+      axios
+        .get(`http://localhost:3000/bids?email=${user.email}`)
+        .then((response) => setBids(response.data));
     }
   }, [user]);
 
   const handleRemoveBid = async (bidId) => {
     try {
-      const response = await fetch(`http://localhost:3000/bids/${bidId}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
+      const { data } = await axios.delete(
+        `http://localhost:3000/bids/${bidId}`,
+      );
 
       if (data.deletedCount > 0) {
         setBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));

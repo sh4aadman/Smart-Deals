@@ -12,6 +12,7 @@ import ProductDetails from "../features/products/components/ProductDetails";
 import ProductLayout from "../layouts/ProductLayout/ProductLayout";
 import Loading from "../components/ui/Loading/Loading";
 import PrivateRoute from "./Private Route/PrivateRoute";
+import axios from "axios";
 
 const router = createBrowserRouter([
   {
@@ -35,8 +36,12 @@ const router = createBrowserRouter([
             children: [
               {
                 path: ":id",
-                loader: ({ params }) =>
-                  fetch(`http://localhost:3000/products/${params.id}`),
+                loader: async ({ params }) => {
+                  const response = await axios.get(
+                    `http://localhost:3000/products/${params.id}`,
+                  );
+                  return response.data;
+                },
                 Component: ProductDetails,
                 hydrateFallbackElement: <Loading />,
               },
@@ -58,7 +63,12 @@ const router = createBrowserRouter([
           {
             path: "create-product",
             Component: CreateProduct,
-            loader: () => fetch("http://localhost:3000/products"),
+            loader: async () => {
+              const response = await axios.get(
+                "http://localhost:3000/products",
+              );
+              return response.data;
+            },
             hydrateFallbackElement: <Loading />,
           },
         ],
