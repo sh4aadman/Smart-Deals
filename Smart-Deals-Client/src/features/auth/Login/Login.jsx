@@ -1,11 +1,12 @@
 import { use, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
+import { toast } from "sonner";
 
 function Login() {
   const [error, setError] = useState("");
 
-  const { setUser, signinUser } = use(AuthContext);
+  const { signinUser, signinGoogle } = use(AuthContext);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -15,14 +16,42 @@ function Login() {
     const email = e.target.email.value;
     const password = e.target.password.value;
     signinUser(email, password)
-      .then((creds) => {
-        const user = creds.user;
-        setUser(user);
+      .then(() => {
         navigate(`${location.state ? location.state : "/"}`);
       })
       .catch((error) => {
         const errorMsg = error.message;
         setError(errorMsg);
+      });
+  };
+
+  const handleGoogleSignIn = () => {
+    signinGoogle()
+      .then((creds) => {
+        const newUser = {
+          uid: creds.user.uid,
+          email: creds.user.email,
+          photoURL: creds.user.photoURL,
+          displayName: creds.user.displayName,
+        };
+        fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.insertedId) {
+              toast("User has successfully logged in!");
+              navigate(`${location.state ? location.state : "/"}`);
+            }
+          });
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
       });
   };
 
@@ -78,7 +107,10 @@ function Login() {
               OR
             </p>
           </section>
-          <button className="btn py-4 bg-white font-semibold text-base text-primary border-accent">
+          <button
+            onClick={handleGoogleSignIn}
+            className="btn py-4 bg-white font-semibold text-base text-primary border-accent"
+          >
             <svg
               aria-label="Google logo"
               width="24"

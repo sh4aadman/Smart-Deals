@@ -1,17 +1,17 @@
 import { use } from "react";
 import { AuthContext } from "../../context/Auth Context/AuthProvider";
 import { Navigate, Outlet, useLocation } from "react-router";
-import Loading from "../../components/ui/Loading/Loading";
+import LoadingScreen from "../../components/ui/Loading/LoadingScreen";
 
 function PrivateRoute() {
   const { user, loading } = use(AuthContext);
   const location = useLocation();
 
   if (loading) {
-    return <Loading />;
+    return <LoadingScreen />;
   }
 
-  if (user && user.email) {
+  if (user) {
     return <Outlet />;
   }
 

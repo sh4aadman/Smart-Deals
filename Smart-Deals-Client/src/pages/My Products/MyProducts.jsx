@@ -17,7 +17,7 @@ function MyProducts() {
     <section className="mt-20 mb-10 min-h-[33.5vh]">
       <section className="mb-10">
         <h2 className="font-bold text-5xl text-primary text-center">
-          Create <span className="text-secondary">A Product</span>
+          My Products <span className="text-secondary">{products.length}</span>
         </h2>
       </section>
       <section className="mx-20">

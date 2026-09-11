@@ -1,7 +1,9 @@
 import {
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
@@ -12,27 +14,29 @@ import { createUserWithEmailAndPassword } from "firebase/auth/cordova";
 const auth = getAuth(app);
 const AuthContext = createContext();
 
+const googleProvider = new GoogleAuthProvider();
+
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const createUser = (email, password) => {
-    setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
   const signinUser = (email, password) => {
-    setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
   const updateUser = (updatedInfo) => {
-    setLoading(true);
     return updateProfile(auth.currentUser, updatedInfo);
   };
 
+  const signinGoogle = () => {
+    return signInWithPopup(auth, googleProvider);
+  };
+
   const signoutUser = () => {
-    setLoading(true);
     return signOut(auth);
   };
 
@@ -54,6 +58,7 @@ function AuthProvider({ children }) {
     createUser,
     signinUser,
     updateUser,
+    signinGoogle,
     signoutUser,
     setLoading,
   };

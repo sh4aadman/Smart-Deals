@@ -1,6 +1,7 @@
 import { use, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../../context/Auth Context/AuthProvider";
+import { toast } from "sonner";
 
 function Navbar() {
   const [err, setErr] = useState("");
@@ -40,7 +41,7 @@ function Navbar() {
       })
       .catch((error) => {
         setErr(error.message);
-        alert(err);
+        toast.error(err);
       });
   };
 
