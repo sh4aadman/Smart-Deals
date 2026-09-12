@@ -2,11 +2,35 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
+const serviceAccount = require("./smart-deals-firebase-adminsdk-key.json");
+
+initializeApp({
+  credential: cert(serviceAccount),
+});
+
 app.use(cors());
 app.use(express.json());
+
+const verifyFirebaseToken = async (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res.status(401).send({ message: "Unauthorized access" });
+  }
+  const token = authorization.split(" ")[1];
+  try {
+    const decoded = await getAuth().verifyIdToken(token);
+    req.decoded = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).send({ message: "Unauthorized access" });
+  }
+};
 
 const uri = process.env.MONGODB_URI;
 
@@ -23,39 +47,35 @@ const productsCollection = db.collection("products");
 const bidsCollection = db.collection("bids");
 const usersCollection = db.collection("users");
 
-app.get("/users", async (req, res) => {
-  const cursor = usersCollection.find();
-  const result = await cursor.toArray();
-  res.send(result);
-});
-
 app.post("/users", async (req, res) => {
   const newUser = req.body;
-  const email = newUser.email;
-  const query = { email: email };
-  const existingUser = await usersCollection.findOne(query);
+  const existingUser = await usersCollection.findOne({ email: newUser.email });
   if (existingUser) {
     res.send({ message: "User already exists!" });
-  } else {
-    const result = await usersCollection.insertOne(newUser);
-    res.send(result);
   }
+  const result = await usersCollection.insertOne(newUser);
+  res.send(result);
 });
 
 app.get("/products", async (req, res) => {
-  const email = req.query.email;
-  const query = {};
-  if (email) {
-    query.email = email;
-  }
-  const cursor = productsCollection.find(query);
+  const cursor = productsCollection.find();
   const result = await cursor.toArray();
   res.send(result);
 });
 
-app.post("/products", async (req, res) => {
-  const newProduct = req.body;
-  const result = await productsCollection.insertOne(newProduct);
+app.get("/recent-products", async (req, res) => {
+  const cursor = productsCollection.find().sort({ created_at: -1 }).limit(6);
+  const result = await cursor.toArray();
+  res.send(result);
+});
+
+app.get("/products/user/:email", verifyFirebaseToken, async (req, res) => {
+  const email = req.params.email;
+  if (email !== req.decoded.email) {
+    return res.status(403).send({ message: "Forbidden access" });
+  }
+  const cursor = productsCollection.find({ email });
+  const result = await cursor.toArray();
   res.send(result);
 });
 
@@ -66,7 +86,16 @@ app.get("/products/:id", async (req, res) => {
   res.send(result);
 });
 
-app.patch("/products/:id", async (req, res) => {
+app.post("/products", verifyFirebaseToken, async (req, res) => {
+  const newProduct = req.body;
+  if (newProduct.email !== req.decoded.email) {
+    return res.status(403).send({ message: "Forbidden access" });
+  }
+  const result = await productsCollection.insertOne(newProduct);
+  res.send(result);
+});
+
+app.patch("/products/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const updateDetails = req.body;
   const query = { _id: new ObjectId(id) };
@@ -80,7 +109,7 @@ app.patch("/products/:id", async (req, res) => {
   res.send(result);
 });
 
-app.delete("/products/:id", async (req, res) => {
+app.delete("/products/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
   const result = await productsCollection.deleteOne(query);
@@ -89,7 +118,7 @@ app.delete("/products/:id", async (req, res) => {
 
 app.patch("/products/:id/status/:text", async (req, res) => {
   const { id, text } = req.params;
-  const query = new ObjectId(id);
+  const query = { _id: new ObjectId(id) };
   const update = {
     $set: {
       status: text,
@@ -99,16 +128,13 @@ app.patch("/products/:id/status/:text", async (req, res) => {
   res.send(result);
 });
 
-app.get("/recent-products", async (req, res) => {
-  const cursor = productsCollection.find().sort({ created_at: -1 }).limit(6);
-  const result = await cursor.toArray();
-  res.send(result);
-});
-
-app.get("/bids", async (req, res) => {
+app.get("/bids", verifyFirebaseToken, async (req, res) => {
   const email = req.query.email;
   const query = {};
   if (email) {
+    if (email !== req.decoded.email) {
+      return res.status(403).send({ message: "Forbidden access" });
+    }
     query.buyer_email = email;
   }
   const bids = await bidsCollection.find(query).toArray();
@@ -136,12 +162,6 @@ app.get("/bids", async (req, res) => {
   res.send(result);
 });
 
-app.post("/bids", async (req, res) => {
-  const newBid = req.body;
-  const result = await bidsCollection.insertOne(newBid);
-  res.send(result);
-});
-
 app.get("/bids/:productId", async (req, res) => {
   const productId = req.params.productId;
   const query = { product: productId };
@@ -150,28 +170,30 @@ app.get("/bids/:productId", async (req, res) => {
   res.send(result);
 });
 
-app.get("/bids/:email", async (req, res) => {
-  const email = req.params.email;
-  const query = { buyer_email: email };
-  const result = await bidsCollection.findOne(query);
+app.post("/bids", verifyFirebaseToken, async (req, res) => {
+  const newBid = req.body;
+  if (newBid.buyer_email !== req.decoded.email) {
+    return res.status(403).send({ message: "Forbidden access" });
+  }
+  const result = await bidsCollection.insertOne(newBid);
   res.send(result);
 });
 
-app.delete("/bids/:id", async (req, res) => {
+app.delete("/bids/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
   const result = await bidsCollection.deleteOne(query);
   res.send(result);
 });
 
-app.delete("/bids/product/:id", async (req, res) => {
+app.delete("/bids/product/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const query = { product: new ObjectId(id) };
-  const result = await bidsCollection.deleteOne(query);
+  const result = await bidsCollection.deleteMany(query);
   res.send(result);
 });
 
-app.patch("/bids/status/:id", async (req, res) => {
+app.patch("/bids/status/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
   const updatedDetails = req.body;
   const query = { _id: new ObjectId(id) };
