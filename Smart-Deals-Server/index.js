@@ -52,6 +52,10 @@ const productsCollection = db.collection("products");
 const bidsCollection = db.collection("bids");
 const usersCollection = db.collection("users");
 
+app.get('/', (req, res) => {
+    res.send('Smart server is running')
+})
+
 app.post("/users", async (req, res) => {
   const newUser = req.body;
   const existingUser = await usersCollection.findOne({ email: newUser.email });
