@@ -8,8 +8,12 @@ const port = process.env.PORT || 3000;
 
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
-const decoded = Buffer.from(process.env.FIREBASE_SERVICE_KEY, "base64").toString("utf8");
+const decoded = Buffer.from(
+  process.env.FIREBASE_SERVICE_KEY,
+  "base64",
+).toString("utf8");
 const serviceAccount = JSON.parse(decoded);
+
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -112,9 +116,19 @@ app.patch("/products/:id", verifyFirebaseToken, async (req, res) => {
 
 app.delete("/products/:id", verifyFirebaseToken, async (req, res) => {
   const id = req.params.id;
-  const query = { _id: new ObjectId(id) };
-  const result = await productsCollection.deleteOne(query);
-  res.send(result);
+  const productResult = await productsCollection.deleteOne({
+    _id: new ObjectId(id),
+  });
+  if (productResult.deletedCount === 0) {
+    return res
+      .status(404)
+      .send({ message: "Product not found or already deleted!" });
+  }
+  const bidResult = await bidsCollection.deleteMany({ product: id });
+  res.send({
+    deletedProduct: productResult.deletedCount,
+    deletedBids: bidResult.deletedCount,
+  });
 });
 
 app.patch("/products/:id/status/:text", async (req, res) => {
