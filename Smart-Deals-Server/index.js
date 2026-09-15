@@ -229,3 +229,5 @@ client
     });
   })
   .catch(console.dir);
+
+  module.exports = app;
