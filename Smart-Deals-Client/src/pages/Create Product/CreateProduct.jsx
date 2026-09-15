@@ -1,14 +1,15 @@
-import { use, useRef } from "react";
+import { useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link, useLoaderData, useNavigate } from "react-router";
-import { AuthContext } from "../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
-import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function CreateProduct() {
   const products = useLoaderData();
 
-  const { user } = use(AuthContext);
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const formRef = useRef(null);
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ function CreateProduct() {
       description,
       seller_contact,
     };
-    axios.post("http://localhost:3000/products", newProduct).then((data) => {
+    axiosSecure.post("/products", newProduct).then((data) => {
       if (data.data.insertedId) {
         toast("Your product has been created!");
         formRef.current.reset();

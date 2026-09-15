@@ -1,13 +1,13 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
-import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
+import axiosInstance from "../../../hooks/useAxios";
 
 function Register() {
   const [error, setError] = useState("");
 
-  const { setUser, createUser, updateUser } = use(AuthContext);
+  const { setUser, createUser, updateUser } = useAuth();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ function Register() {
               displayName: name,
               photoURL,
             };
-            axios.post("http://localhost:3000/users", newUser).then((data) => {
+            axiosInstance.post("/users", newUser).then((data) => {
               if (data.data.insertedId) {
                 setUser({ ...signedinUser, displayName: name, photoURL });
                 toast("User has successfully registered!");

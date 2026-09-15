@@ -1,12 +1,12 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
+import useAuth from "../../../hooks/useAuth";
 
 function Navbar() {
   const [err, setErr] = useState("");
 
-  const { user, signoutUser } = use(AuthContext);
+  const { user, signoutUser } = useAuth();
 
   const navigate = useNavigate();
 

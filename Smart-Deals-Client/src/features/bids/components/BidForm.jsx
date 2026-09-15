@@ -1,10 +1,12 @@
-import { use, useState } from "react";
-import { AuthContext } from "../../../context/Auth Context/AuthProvider";
+import { useState } from "react";
 import { toast } from "sonner";
-import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 function BidForm({ id, ref, handleNewBid }) {
-  const { user } = use(AuthContext);
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
   const [userBid, setUserBid] = useState(0);
   const [contact, setContact] = useState("");
 
@@ -36,7 +38,7 @@ function BidForm({ id, ref, handleNewBid }) {
       bid_price: bid,
       status: "pending",
     };
-    axios.post("http://localhost:3000/bids", newBid).then((data) => {
+    axiosSecure.post("/bids", newBid).then((data) => {
       if (data.data.insertedId) {
         ref.current.close();
         toast("Your Bid has been placed!");

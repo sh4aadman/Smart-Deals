@@ -1,13 +1,13 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { AuthContext } from "../../../context/Auth Context/AuthProvider";
 import { toast } from "sonner";
-import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
+import axiosInstance from "../../../hooks/useAxios";
 
 function Login() {
   const [error, setError] = useState("");
 
-  const { signinUser, signinGoogle } = use(AuthContext);
+  const { signinUser, signinGoogle } = useAuth();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ function Login() {
           photoURL: creds.user.photoURL,
           displayName: creds.user.displayName,
         };
-        axios.post("http://localhost:3000/users", newUser).then((data) => {
+        axiosInstance.post("/users", newUser).then((data) => {
           if (data.data.insertedId) {
             toast("User has successfully logged in!");
             navigate(`${location.state ? location.state : "/"}`);

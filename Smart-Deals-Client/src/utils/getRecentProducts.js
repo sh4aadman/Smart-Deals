@@ -1,10 +1,10 @@
-import axios from "axios";
+import axiosInstance from "../hooks/useAxios";
 
 const fetchRecentProducts = async () => {
-  const response = await axios.get("http://localhost:3000/recent-products");
+  const response = await axiosInstance.get("/recent-products");
   return response.data;
 };
 
 const recentProductsPromise = fetchRecentProducts();
 
-export { recentProductsPromise };
+export default recentProductsPromise;

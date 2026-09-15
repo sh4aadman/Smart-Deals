@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import ProductGrid from "../components/ProductGrid";
 import Loading from "../../../components/ui/Loading/Loading";
-import { recentProductsPromise } from "../../../utils/getRecentProducts";
+import recentProductsPromise from "../../../utils/getRecentProducts";
 
 function RecentProduct() {
   return (

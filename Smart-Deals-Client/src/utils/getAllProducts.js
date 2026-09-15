@@ -1,10 +1,8 @@
-import axios from "axios";
+import axiosInstance from "../hooks/useAxios";
 
 const fetchAllProducts = async () => {
-  const response = await axios.get("http://localhost:3000/products");
+  const response = await axiosInstance.get("/products");
   return response.data;
 };
 
-const allProductsPromise = fetchAllProducts();
-
-export { allProductsPromise };
+export default fetchAllProducts;

@@ -1,18 +1,49 @@
-import { use, useEffect, useState } from "react";
-import { AuthContext } from "../../context/Auth Context/AuthProvider";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { toast } from "sonner";
 
 function MyProducts() {
-  const { user } = use(AuthContext);
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
   const [products, setProducts] = useState([]);
+
+  const handleDelete = async (productId) => {
+    try {
+      const { data } = await axiosSecure.delete(`/products/${productId}`);
+
+      if (data.deletedProductt === 0) {
+        throw new Error("Product not found or already deleted!");
+      }
+
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product._id !== productId),
+      );
+
+      if (data.deletedBids > 0) {
+        toast.success(
+          `${data.deletedBids} associated bid(s) removed successfully!`,
+        );
+      } else {
+        toast.success("Product removed successfully!");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.messsage ||
+        error.message ||
+        "Failed to delete product";
+      toast.error(errorMessage);
+    }
+  };
 
   useEffect(() => {
     if (!user?.email) return;
 
-    axios
-      .get(`http://localhost:3000/products?email=${user.email}`)
+    axiosSecure
+      .get(`/products/user/${user.email}`)
       .then((response) => setProducts(response.data));
-  }, [user]);
+  }, [user?.email, axiosSecure]);
 
   return (
     <section className="mt-20 mb-10 min-h-[33.5vh]">
@@ -88,7 +119,10 @@ function MyProducts() {
                     <button className="mr-2 px-3.5 py-1.5 rounded-sm border border-secondary font-medium text-sm text-secondary cursor-pointer">
                       Edit
                     </button>
-                    <button className="mr-2 px-3.5 py-1.5 rounded-sm border border-error font-medium text-sm text-error cursor-pointer">
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="mr-2 px-3.5 py-1.5 rounded-sm border border-error font-medium text-sm text-error cursor-pointer"
+                    >
                       Delete
                     </button>
                     <button className="px-3.5 py-1.5 rounded-sm border border-success font-medium text-sm text-success cursor-pointer">

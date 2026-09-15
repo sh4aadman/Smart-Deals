@@ -1,33 +1,38 @@
 import Table from "../../components/ui/Table/Table";
-import { use, useEffect, useState } from "react";
-import { AuthContext } from "../../context/Auth Context/AuthProvider";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function MyBids() {
-  const { user } = use(AuthContext);
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
   const [bids, setBids] = useState([]);
 
   useEffect(() => {
     if (user?.email) {
-      axios
-        .get(`http://localhost:3000/bids?email=${user.email}`)
+      axiosSecure
+        .get(`/bids?email=${user.email}`)
         .then((response) => setBids(response.data));
     }
-  }, [user]);
+  }, [user?.email, axiosSecure]);
 
   const handleRemoveBid = async (bidId) => {
+    setBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
+
     try {
-      const { data } = await axios.delete(
-        `http://localhost:3000/bids/${bidId}`,
-      );
+      const { data } = await axiosSecure.delete(`/bids/${bidId}`);
 
       if (data.deletedCount > 0) {
-        setBids((prevBids) => prevBids.filter((bid) => bid._id !== bidId));
         toast.success("Bid removed successfully!");
+      } else {
+        throw new Error("Bid not found or already deleted!");
       }
     } catch (error) {
-      toast.error(`Failed to remove bid! ${error.message}`);
+      const errorMessage =
+        error.response?.data?.message || "Failed to remove bid!";
+      toast.error(errorMessage);
     }
   };
 
